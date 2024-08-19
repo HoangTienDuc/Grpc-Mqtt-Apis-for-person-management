@@ -29,11 +29,14 @@ This repo demonstrates Mqtt API / sample python code for human management proble
 
 ## APIS
 Currently includes 9 APIs. The implementation description of the APIs is as follows:
+
 Step 1. First, when a new company/organization requests to use the product. The Web will send a request to create an organization.
+
 Step 2: Add employees to the data for identification.
 
-2.1: Step of extracting facial images: Send photos containing employees to the AI ​​side (the image can include many people), then the AI ​​side sends many images of the face cropped out of the image
-2.2: The Web receives the faces, selects the face according to the user who wants to add. Then sends the cropped face/name and term to identify that employee to the AI ​​side.
+    2.1: Step of extracting facial images: Send photos containing employees to the AI ​​side (the image can include many people), then  the AI ​​side sends many images of the face cropped out of the image
+    
+    2.2: The Web receives the faces, selects the face according to the user who wants to add. Then sends the cropped face/name and term to identify that employee to the AI ​​side.
 
 Step 3: Identify employees: In this step, the Web sends any image + configuration to identify whether or not it is safe to work (identify wearing a hat or protective clothing), the AI ​​side will send the result of the name and corresponding image in the photo.
 
