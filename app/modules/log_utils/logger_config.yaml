@@ -1,0 +1,122 @@
+version: 1
+objects:
+  queue:
+    class: queue.Queue
+    maxsize: 1000
+formatters:
+  simple:
+    format: '%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - %(lineno)s - %(message)s'
+
+filters:
+  info:
+      (): app.modules.log_utils.logger_util.InfoFilter
+  
+  warning:
+    (): app.modules.log_utils.logger_util.WarningFilter
+
+  error:
+      (): app.modules.log_utils.logger_util.ErrorFilter
+
+  debug:
+      (): app.modules.log_utils.logger_util.DebugFilter
+  
+  critical:
+      (): app.modules.log_utils.logger_util.CriticalFilter
+
+
+handlers:
+  console:
+      level: INFO
+      formatter: simple
+      class: logging.StreamHandler
+      stream: ext://sys.stdout
+
+  info_file:
+      level: INFO
+      formatter: simple
+      class: logging.handlers.TimedRotatingFileHandler
+      filename: logs/log_info.log
+      when: midnight
+      interval: 1
+      backupCount: 30
+      delay: true
+      encoding: utf8
+      filters:
+          - info
+
+  file_warning:
+      level: WARNING
+      formatter: simple
+      class: logging.handlers.TimedRotatingFileHandler
+      filename: logs/log_warning.log
+      when: midnight
+      interval: 1
+      backupCount: 30
+      delay: true
+      encoding: utf8
+      filters:
+          - warning
+
+  file_debug:
+      level: DEBUG
+      formatter: simple
+      class: logging.handlers.TimedRotatingFileHandler
+      filename: logs/log_debug.log
+      when: midnight
+      interval: 1
+      backupCount: 30
+      delay: true
+      encoding: utf8
+      filters:
+          - debug
+  
+  file_critical:
+      level: CRITICAL
+      formatter: simple
+      class: logging.handlers.TimedRotatingFileHandler
+      filename: logs/log_critial.log
+      when: midnight
+      interval: 1
+      backupCount: 30
+      delay: true
+      encoding: utf8
+      filters:
+          - critical
+
+  error_file:
+      level: ERROR
+      formatter: simple
+      class: logging.handlers.TimedRotatingFileHandler
+      filename: logs/log_error.log
+      when: midnight
+      interval: 1
+      backupCount: 30
+      delay: true
+      encoding: utf8
+      filters:
+          - error
+
+  queue_listener:
+    class: app.modules.log_utils.logger_util.QueueListenerHandler
+    handlers:
+      - cfg://handlers.info_file
+      - cfg://handlers.file_warning
+      - cfg://handlers.file_debug
+      - cfg://handlers.file_critical
+      - cfg://handlers.error_file
+    queue: cfg://objects.queue
+
+loggers:
+  run:
+    handlers:
+      - queue_listener
+    propagate: false
+  mqtt_handler:
+    handlers:
+      - queue_listener
+    propagate: false
+
+root:
+  level: WARNING
+  handlers:
+    - console
